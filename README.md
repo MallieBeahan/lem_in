@@ -1,3 +1,3 @@
 # lem_in
 
-Добавлена функция add_level_push в файле lem-in.c а
+Добавлена функция queue_level_push в файле lem-in.c а
