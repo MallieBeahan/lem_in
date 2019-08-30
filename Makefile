@@ -6,7 +6,7 @@
 #    By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/20 12:31:51 by rymuller          #+#    #+#              #
-#    Updated: 2019/08/12 19:39:35 by mbeahan          ###   ########.fr        #
+#    Updated: 2019/08/30 19:30:34 by mbeahan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,9 +17,12 @@ SRC :=	create_singly_linked_list.c \
 		lem_in.c \
 		parse_room.c \
 		parse_link.c \
-		queue.c
+		queue.c \
+		breadth_first_search.c \
+		find_path_in_graph.c \
+		ants_push.c
 
-CFLAGS := -ggdb -Wall -Wextra -Werror
+CFLAGS := -ggdb -g -O0 -Wall -Wextra -Werror
 HEADER := -I./libft/includes
 LIB := -L./libft -lft -L./ft_printf -lftprintf
 

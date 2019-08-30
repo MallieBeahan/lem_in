@@ -6,7 +6,7 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/25 13:11:28 by rymuller          #+#    #+#             */
-/*   Updated: 2019/08/12 21:03:19 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/08/30 18:24:57 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,11 @@ static t_adjlst		*ft_new_adjlst(t_node *node)
 	adjlst->node.name = node->name;
 	adjlst->node.x = node->x;
 	adjlst->node.y = node->y;
+	adjlst->node.ant_name = 0;
+	adjlst->node.ants_here = 0;
 	adjlst->lst = NULL;
 	adjlst->next = NULL;
-	adjlst->level = -1;
+	adjlst->level = 0;
 	adjlst->visited = 0;
 	return (adjlst);
 }

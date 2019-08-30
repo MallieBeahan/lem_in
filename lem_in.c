@@ -6,15 +6,13 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/12 12:32:49 by rymuller          #+#    #+#             */
-/*   Updated: 2019/08/13 15:22:28 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/08/30 19:31:20 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
+#include <fcntl.h>
 #include <stdio.h>
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <fcntl.h>
 
 static void		initialize(t_lemin *lemin, char **line)
 {
@@ -26,8 +24,8 @@ static void		initialize(t_lemin *lemin, char **line)
 	lemin->adjlst = NULL;
 	lemin->start = NULL;
 	lemin->end = NULL;
-	lemin->level = 0;
 	lemin->queue = NULL;
+	lemin->paths = NULL;
 }
 
 static void		print_graph(t_lemin *lemin)
@@ -63,6 +61,31 @@ static void		print_graph(t_lemin *lemin)
 					((t_adjlst *)buffer2->adjlst)->node.name,
 					((t_adjlst *)buffer2->adjlst)->node.x,
 					((t_adjlst *)buffer2->adjlst)->node.y,
+					((t_adjlst *)buffer2->adjlst)->level,
+					((t_adjlst *)buffer2->adjlst)->visited);
+			buffer2 = buffer2->next;
+		}
+		buffer1 = buffer1->next;
+	}
+}
+
+static void		print_paths(t_lemin *lemin)
+{
+	t_path		*buffer1;
+	t_lst		*buffer2;
+
+	buffer1 = lemin->paths;
+	while (buffer1)
+	{
+		printf("path: name = %s, level = %d, path_len = %d\n",
+				buffer1->start->node.name,
+				buffer1->start->level,
+				buffer1->path_len);
+		buffer2 = buffer1->path_lst;
+		while (buffer2)
+		{
+			printf("    room: name = %s, level = %d, visited = %d\n",
+					((t_adjlst *)buffer2->adjlst)->node.name,
 					((t_adjlst *)buffer2->adjlst)->level,
 					((t_adjlst *)buffer2->adjlst)->visited);
 			buffer2 = buffer2->next;
@@ -123,63 +146,14 @@ static char		is_all_links_to_rooms(t_lemin *lemin)
 	return (1);
 }
 
-static void		queue_level_push(t_lemin *lemin)
+int			main(void)
 {
-	t_lst	*tmp_queue;
-	int		lvl;
-
-	tmp_queue = lemin->queue;
-	lvl = 0;
-	if (lemin->queue)
-	{
-		lvl = ((t_adjlst *)lemin->queue->adjlst)->level + 1;
-		while (tmp_queue)
-		{
-			if (((t_adjlst *)tmp_queue->adjlst)->level < 0)
-				((t_adjlst *)tmp_queue->adjlst)->level = lvl;
-			tmp_queue = tmp_queue->next;
-		}
-	}
-}
-
-static void		add_neighbors_adjlst_to_queue(t_lemin *lemin)
-{
-	t_lst		*buffer;
-
-	buffer = ((t_adjlst *)lemin->queue->adjlst)->lst;
-	while (buffer)
-	{
-		ft_push_queue(lemin, buffer->adjlst);
-		buffer = buffer->next;
-	}
-	queue_level_push(lemin);
-}
-
-void			breadth_first_search_to_start(t_lemin *lemin)
-{
-	ft_push_queue(lemin, lemin->end);
-	((t_adjlst *)lemin->queue->adjlst)->level = 1;
-	while (lemin->queue)
-	{
-		if (!(((t_adjlst *)lemin->queue->adjlst)->visited))
-		{
-			add_neighbors_adjlst_to_queue(lemin);
-			((t_adjlst *)lemin->queue->adjlst)->visited = 1;
-		}
-		ft_pop_queue(lemin);
-	}
-}
-
-int				main(int ac, char **av)
-{
+	int		fd;
 	char		*line;
 	t_lemin		lemin;
-	int fd;
 
-	fd = 0;
-	if (ac == 2)
-		fd = open(av[1], O_RDONLY);
 	initialize(&lemin, &line);
+	fd = open("hard.map", O_RDONLY);
 	while (get_next_line(fd, &line))
 	{
 		if (*line == '#' && *(line + 1) != '#')
@@ -191,12 +165,20 @@ int				main(int ac, char **av)
 		{
 			free(line);
 			return (0);
-		}		free(line);
+		}
+		free(line);
 	}
 	if (!is_all_links_to_rooms(&lemin))
 		return (0);
 	breadth_first_search_to_start(&lemin);
 	print_graph(&lemin);
+	printf("=================================================\n");
+	while (add_shortest_parallel_path_to_paths(&lemin))
+		;
+	//
+	print_paths(&lemin);
+	send_ants(&lemin);
+	printf("=================================================\n");
 	free_graph(&lemin);
 	return (0);
 }
