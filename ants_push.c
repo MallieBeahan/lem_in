@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   ants_push.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 16:33:08 by mbeahan           #+#    #+#             */
-/*   Updated: 2019/08/30 19:36:09 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/08/31 15:03:24 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ void    send_ants(t_lemin *lemin)
         current_ant = put_ant_to_path(best_way, current_ant);
         while (other_ways)
         {
-            if (other_ways->path_len <= ((lemin->number_of_ants - current_ant) * best_way->path_len))
+            if ((other_ways->path_len <= ((lemin->number_of_ants - current_ant) * best_way->path_len)) || (other_ways->path_len <= best_way->path_len))
                 current_ant = put_ant_to_path(other_ways, current_ant);
             other_ways = other_ways->next;
         }
