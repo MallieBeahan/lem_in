@@ -6,7 +6,7 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 16:33:08 by mbeahan           #+#    #+#             */
-/*   Updated: 2019/08/31 15:03:24 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/08/31 15:50:04 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void    send_ants(t_lemin *lemin)
     current_ant = 1;
     while(finished_ants <= lemin->number_of_ants)
     {
-        (lemin->paths->next) ? (other_ways = lemin->paths->next) : (other_ways = NULL);
+        (lemin->paths->next) ? (other_ways = best_way->next) : (other_ways = NULL);
         current_ant = put_ant_to_path(best_way, current_ant);
         while (other_ways)
         {
