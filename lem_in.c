@@ -6,7 +6,7 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/12 12:32:49 by rymuller          #+#    #+#             */
-/*   Updated: 2019/08/30 19:31:20 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/09/01 17:39:59 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static void		initialize(t_lemin *lemin, char **line)
 	lemin->is_start = 0;
 	lemin->is_end = 0;
 	lemin->number_of_ants = 0;
+	lemin->count_bfs = 0;
 	lemin->adjlst = NULL;
 	lemin->start = NULL;
 	lemin->end = NULL;
@@ -33,36 +34,36 @@ static void		print_graph(t_lemin *lemin)
 	t_adjlst	*buffer1;
 	t_lst		*buffer2;
 
-	printf(">>> start: name = %s, x = %d, y = %d, level = %d, visited = %d\n",
+	printf(">>> start: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
 			lemin->start->node.name,
 			lemin->start->node.x,
 			lemin->start->node.y,
 			lemin->start->level,
-			lemin->start->visited);
-	printf("<<< end: name = %s, x = %d, y = %d, level = %d, visited = %d\n",
+			lemin->start->visited_bfs);
+	printf("<<< end: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
 			lemin->end->node.name,
 			lemin->end->node.x,
 			lemin->end->node.y,
 			lemin->end->level,
-			lemin->end->visited);
+			lemin->end->visited_bfs);
 	buffer1 = lemin->adjlst;
 	while (buffer1)
 	{
-		printf("room: name = %s, x = %d, y = %d, level = %d, visited = %d\n",
+		printf("room: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
 				buffer1->node.name,
 				buffer1->node.x,
 				buffer1->node.y,
 				buffer1->level,
-				buffer1->visited);
+				buffer1->visited_bfs);
 		buffer2 = buffer1->lst;
 		while (buffer2)
 		{
-			printf("  link: name = %s, x = %d, y = %d, level = %d, visited = %d\n",
+			printf("  link: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
 					((t_adjlst *)buffer2->adjlst)->node.name,
 					((t_adjlst *)buffer2->adjlst)->node.x,
 					((t_adjlst *)buffer2->adjlst)->node.y,
 					((t_adjlst *)buffer2->adjlst)->level,
-					((t_adjlst *)buffer2->adjlst)->visited);
+					((t_adjlst *)buffer2->adjlst)->visited_bfs);
 			buffer2 = buffer2->next;
 		}
 		buffer1 = buffer1->next;
@@ -81,13 +82,13 @@ static void		print_paths(t_lemin *lemin)
 				buffer1->start->node.name,
 				buffer1->start->level,
 				buffer1->path_len);
-		buffer2 = buffer1->path_lst;
+		buffer2 = buffer1->path_lst[0];
 		while (buffer2)
 		{
-			printf("    room: name = %s, level = %d, visited = %d\n",
+			printf("    room: name = %s, level = %d, visited_bfs = %d\n",
 					((t_adjlst *)buffer2->adjlst)->node.name,
 					((t_adjlst *)buffer2->adjlst)->level,
-					((t_adjlst *)buffer2->adjlst)->visited);
+					((t_adjlst *)buffer2->adjlst)->visited_bfs);
 			buffer2 = buffer2->next;
 		}
 		buffer1 = buffer1->next;
@@ -153,7 +154,7 @@ int			main(void)
 	t_lemin		lemin;
 
 	initialize(&lemin, &line);
-	fd = open("hard.map", O_RDONLY);
+	fd = open("maps/small.map", O_RDONLY);
 	while (get_next_line(fd, &line))
 	{
 		if (*line == '#' && *(line + 1) != '#')
@@ -170,15 +171,13 @@ int			main(void)
 	}
 	if (!is_all_links_to_rooms(&lemin))
 		return (0);
-	breadth_first_search_to_start(&lemin);
 	print_graph(&lemin);
 	printf("=================================================\n");
 	while (add_shortest_parallel_path_to_paths(&lemin))
 		;
-	//
 	print_paths(&lemin);
-	send_ants(&lemin);
 	printf("=================================================\n");
+	send_ants(&lemin);
 	free_graph(&lemin);
 	return (0);
 }

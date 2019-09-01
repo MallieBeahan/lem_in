@@ -6,7 +6,7 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/12 12:35:01 by rymuller          #+#    #+#             */
-/*   Updated: 2019/08/30 19:28:00 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/09/01 17:36:44 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ typedef struct			s_node
 	char				*name;
 	int					x;
 	int					y;
-	int					ants_here;
+	int					count_ants_here;
 	int					ant_name;
 }						t_node;
 
@@ -34,31 +34,32 @@ typedef struct			s_adjlst
 	t_node				node;
 	t_lst				*lst;
 	int					level;
-	unsigned int		visited:2;
+	int					visited_bfs;
+	int					visited_pth;
 	struct s_adjlst		*next;
 }						t_adjlst;
 
 typedef struct			s_path
 {
 	t_adjlst			*start;
-	t_lst				*path_lst;
+	t_lst				*path_lst[2];
 	int					path_len;
-	unsigned int		used:1;
 	struct s_path		*next;
 }						t_path;
 
 typedef struct			s_lemin
 {
 	int					number_of_ants;
+	int					count_bfs;
 	unsigned int		is_ants:1;
 	unsigned int		is_start:1;
 	unsigned int		is_end:1;
 	t_adjlst			*adjlst;
 	t_adjlst			*start;
 	t_adjlst			*end;
-	t_adjlst			*buffer;
 	t_lst				*queue;
 	t_path				*paths;
+	t_adjlst			*buffer;
 }						t_lemin;
 
 int						ft_printf(const char *format, ...);
@@ -67,7 +68,7 @@ t_lst					*ft_new_lst(t_adjlst *adjlst);
 t_lst					*ft_lst_push_back(t_lemin *lemin,
 		t_adjlst *adjlst1, t_adjlst *adjlst2);
 void					free_adjlst(t_lemin *lemin);
-void					free_path_lst(t_lst *path_lst);
+void					free_path_lst(t_lst *path_lst[2]);
 char					parse_room(t_lemin *lemin, char *line);
 char					parse_link(t_lemin *lemin, char *line);
 void					free_graph(t_lemin *lemin);

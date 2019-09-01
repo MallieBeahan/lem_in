@@ -6,7 +6,7 @@
 /*   By: rymuller <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/25 13:12:13 by rymuller          #+#    #+#             */
-/*   Updated: 2019/08/30 12:56:05 by rymuller         ###   ########.fr       */
+/*   Updated: 2019/09/01 17:27:41 by rymuller         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,14 @@ void			free_adjlst(t_lemin *lemin)
 	}
 }
 
-void			free_path_lst(t_lst *path_lst)
+void			free_path_lst(t_lst *path_lst[2])
 {
 	t_lst			*victim;
 	t_lst			*buffer;
 
-	if (path_lst)
+	if (path_lst[0])
 	{
-		buffer = path_lst;
+		buffer = path_lst[0];
 		while (buffer)
 		{
 			victim = buffer;
@@ -105,7 +105,7 @@ void			free_graph(t_lemin *lemin)
 		path = lemin->paths;
 		while (path)
 		{
-			if (path->path_lst)
+			if (path->path_lst[0])
 				free_path_lst(path->path_lst);
 			path = path->next;
 		}
