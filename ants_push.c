@@ -6,7 +6,7 @@
 /*   By: Alexandr <Alexandr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 16:33:08 by mbeahan           #+#    #+#             */
-/*   Updated: 2019/09/02 21:20:18 by Alexandr         ###   ########.fr       */
+/*   Updated: 2019/09/02 21:37:35 by Alexandr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ static void move_ant(t_lst *hill_with_ant, t_path *path, t_lemin *lemin)
 {
 	if (hill_with_ant && ((t_adjlst *)hill_with_ant->adjlst)->node.count_ants_here)
 	{
-		printf("L%d-%s ", ((t_adjlst *)hill_with_ant->adjlst)->node.ant_name, ((t_adjlst *)hill_with_ant->next->adjlst)->node.name);
+		if (hill_with_ant->next)
+			printf("L%d-%s ", ((t_adjlst *)hill_with_ant->adjlst)->node.ant_name, ((t_adjlst *)hill_with_ant->next->adjlst)->node.name);
 		((t_adjlst *)hill_with_ant->adjlst)->node.count_ants_here--;
 		if (hill_with_ant->next && (hill_with_ant->next != path->path_lst[1]))
 		{
@@ -27,7 +28,10 @@ static void move_ant(t_lst *hill_with_ant, t_path *path, t_lemin *lemin)
 		}
 		else
 		{
-			((t_adjlst *)hill_with_ant->next->adjlst)->node.ant_name = 0;
+			if (hill_with_ant->next)
+				((t_adjlst *)hill_with_ant->next->adjlst)->node.ant_name = 0;
+			else
+				((t_adjlst *)hill_with_ant->adjlst)->node.ant_name = 0;
 			((t_adjlst *)hill_with_ant->adjlst)->node.ant_name = 0;
 			lemin->end->node.count_ants_here++;
 		}
@@ -48,7 +52,7 @@ static void do_iter(t_lemin *lemin)
 		while (stop)
 		{
 			current_hill = current_path->path_lst[0];
-			while (current_hill != stop)
+			while (current_hill != stop && current_hill)
 			{
 				if (((t_adjlst *)current_hill->adjlst)->node.count_ants_here)
 					hill_with_ant = current_hill;

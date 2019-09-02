@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lem_in.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
+/*   By: Alexandr <Alexandr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/12 12:32:49 by rymuller          #+#    #+#             */
-/*   Updated: 2019/09/01 17:39:59 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/09/02 21:37:49 by Alexandr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,13 +149,11 @@ static char		is_all_links_to_rooms(t_lemin *lemin)
 
 int			main(void)
 {
-	int		fd;
 	char		*line;
 	t_lemin		lemin;
 
 	initialize(&lemin, &line);
-	fd = open("maps/small.map", O_RDONLY);
-	while (get_next_line(fd, &line))
+	while (get_next_line(0, &line))
 	{
 		if (*line == '#' && *(line + 1) != '#')
 		{
