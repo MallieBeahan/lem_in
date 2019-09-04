@@ -6,7 +6,7 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 16:33:08 by mbeahan           #+#    #+#             */
-/*   Updated: 2019/09/04 18:54:35 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/09/04 19:12:21 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,12 +90,13 @@ static void do_iter(t_lemin *lemin)
 	}
 }
 
-static int    put_ant_to_path(t_path *paths, int current_ant, int ant_number)
+static int    put_ant_to_path(t_lemin *lemin, t_path *paths, int current_ant)
 {
-	if (current_ant <= ant_number)
+	if (current_ant <= lemin->number_of_ants)
 	{
-		if (ants_on_the_way(paths))
+		if (ants_on_the_way(paths) || (!(ants_on_the_way(paths)) && lemin->end->node.count_ants_here))
 			printf(" ");
+		//printf("%d\n", ants_on_the_way(paths));
 		((t_adjlst *)paths->path_lst[0]->adjlst)->node.count_ants_here++;
 		((t_adjlst *)paths->path_lst[0]->adjlst)->node.ant_name = current_ant;
 		printf("L%d-%s", ((t_adjlst *)paths->path_lst[0]->adjlst)->node.ant_name, ((t_adjlst *)paths->path_lst[0]->adjlst)->node.name);
@@ -117,12 +118,12 @@ void    send_ants(t_lemin *lemin)
     while(finished_ants < lemin->number_of_ants)
     {
         (lemin->paths->next) ? (other_ways = best_way->next) : (other_ways = NULL);
-        current_ant = put_ant_to_path(best_way, current_ant, lemin->number_of_ants);
+        current_ant = put_ant_to_path(lemin, best_way, current_ant);
 		printf("\n");
         while (other_ways)
         {
             if ((other_ways->path_len <= ((lemin->number_of_ants - current_ant) * best_way->path_len)) || (other_ways->path_len <= best_way->path_len))
-                current_ant = put_ant_to_path(other_ways, current_ant, lemin->number_of_ants);
+                current_ant = put_ant_to_path(lemin, best_way, current_ant);
             other_ways = other_ways->next;
         }
         do_iter(lemin);
