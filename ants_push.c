@@ -3,23 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   ants_push.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Alexandr <Alexandr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/30 16:33:08 by mbeahan           #+#    #+#             */
-/*   Updated: 2019/09/02 21:37:35 by Alexandr         ###   ########.fr       */
+/*   Updated: 2019/09/04 18:54:35 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 #include <stdio.h>
 
+static int ants_on_the_way(t_path *path)
+{
+	int counter;
+	t_lst *tmp_path;
+
+	counter = 0;
+	tmp_path = path->path_lst[0];
+	while(tmp_path != path->path_lst[1])
+	{
+		if (((t_adjlst *)tmp_path->adjlst)->node.count_ants_here)
+			counter++;
+		tmp_path = tmp_path->next;
+	}
+	return (counter);
+}
+
 static void move_ant(t_lst *hill_with_ant, t_path *path, t_lemin *lemin)
 {
 	if (hill_with_ant && ((t_adjlst *)hill_with_ant->adjlst)->node.count_ants_here)
 	{
 		if (hill_with_ant->next)
-			printf("L%d-%s ", ((t_adjlst *)hill_with_ant->adjlst)->node.ant_name, ((t_adjlst *)hill_with_ant->next->adjlst)->node.name);
+			printf("L%d-%s", ((t_adjlst *)hill_with_ant->adjlst)->node.ant_name, ((t_adjlst *)hill_with_ant->next->adjlst)->node.name);
 		((t_adjlst *)hill_with_ant->adjlst)->node.count_ants_here--;
+		
 		if (hill_with_ant->next && (hill_with_ant->next != path->path_lst[1]))
 		{
 			((t_adjlst *)hill_with_ant->next->adjlst)->node.ant_name = ((t_adjlst *)hill_with_ant->adjlst)->node.ant_name;
@@ -46,9 +63,11 @@ static void do_iter(t_lemin *lemin)
 	t_lst	*stop;
 
 	current_path = lemin->paths;
+	hill_with_ant = NULL;
 	while (current_path)
 	{
 		stop = current_path->path_lst[1];
+		current_path->ants_on_the_way = ants_on_the_way(current_path);
 		while (stop)
 		{
 			current_hill = current_path->path_lst[0];
@@ -59,6 +78,12 @@ static void do_iter(t_lemin *lemin)
 				current_hill = current_hill->next;
 			}
 			move_ant(hill_with_ant, current_path, lemin);
+			if (hill_with_ant && current_path->ants_on_the_way > 1)
+			{
+				printf(" ");
+				current_path->ants_on_the_way--;
+			}
+			
 			(stop != hill_with_ant) ? (stop = hill_with_ant) : (stop = NULL);
 		}
 		current_path = current_path->next;	
@@ -69,6 +94,8 @@ static int    put_ant_to_path(t_path *paths, int current_ant, int ant_number)
 {
 	if (current_ant <= ant_number)
 	{
+		if (ants_on_the_way(paths))
+			printf(" ");
 		((t_adjlst *)paths->path_lst[0]->adjlst)->node.count_ants_here++;
 		((t_adjlst *)paths->path_lst[0]->adjlst)->node.ant_name = current_ant;
 		printf("L%d-%s", ((t_adjlst *)paths->path_lst[0]->adjlst)->node.ant_name, ((t_adjlst *)paths->path_lst[0]->adjlst)->node.name);

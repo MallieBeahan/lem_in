@@ -6,7 +6,7 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/12 12:35:01 by rymuller          #+#    #+#             */
-/*   Updated: 2019/09/01 17:36:44 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/09/04 18:35:12 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct			s_path
 	t_adjlst			*start;
 	t_lst				*path_lst[2];
 	int					path_len;
+	int					ants_on_the_way;
 	struct s_path		*next;
 }						t_path;
 
