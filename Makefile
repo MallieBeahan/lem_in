@@ -6,7 +6,7 @@
 #    By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/20 12:31:51 by rymuller          #+#    #+#              #
-#    Updated: 2019/09/01 17:37:24 by mbeahan          ###   ########.fr        #
+#    Updated: 2019/09/05 16:44:42 by mbeahan          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,9 +20,10 @@ SRC :=	create_singly_linked_list.c \
 		queue.c \
 		breadth_first_search.c \
 		find_path_in_graph.c \
-		ants_push.c
+		ants_push.c \
+		ants_push_help.c
 
-CFLAGS := -ggdb -g -O0 -Wall -Wextra -Werror
+CFLAGS := -g -O0 -Wall -Wextra -Werror
 HEADER := -I./libft/includes
 LIB := -L./libft -lft -L./ft_printf -lftprintf
 

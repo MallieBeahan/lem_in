@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   lem_in.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Alexandr <Alexandr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/12 12:32:49 by rymuller          #+#    #+#             */
-/*   Updated: 2019/09/02 21:37:49 by Alexandr         ###   ########.fr       */
+/*   Updated: 2019/09/05 16:38:25 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
-#include <fcntl.h>
-#include <stdio.h>
 
 static void		initialize(t_lemin *lemin, char **line)
 {
@@ -27,72 +25,6 @@ static void		initialize(t_lemin *lemin, char **line)
 	lemin->end = NULL;
 	lemin->queue = NULL;
 	lemin->paths = NULL;
-}
-
-static void		print_graph(t_lemin *lemin)
-{
-	t_adjlst	*buffer1;
-	t_lst		*buffer2;
-
-	printf(">>> start: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
-			lemin->start->node.name,
-			lemin->start->node.x,
-			lemin->start->node.y,
-			lemin->start->level,
-			lemin->start->visited_bfs);
-	printf("<<< end: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
-			lemin->end->node.name,
-			lemin->end->node.x,
-			lemin->end->node.y,
-			lemin->end->level,
-			lemin->end->visited_bfs);
-	buffer1 = lemin->adjlst;
-	while (buffer1)
-	{
-		printf("room: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
-				buffer1->node.name,
-				buffer1->node.x,
-				buffer1->node.y,
-				buffer1->level,
-				buffer1->visited_bfs);
-		buffer2 = buffer1->lst;
-		while (buffer2)
-		{
-			printf("  link: name = %s, x = %d, y = %d, level = %d, visited_bfs = %d\n",
-					((t_adjlst *)buffer2->adjlst)->node.name,
-					((t_adjlst *)buffer2->adjlst)->node.x,
-					((t_adjlst *)buffer2->adjlst)->node.y,
-					((t_adjlst *)buffer2->adjlst)->level,
-					((t_adjlst *)buffer2->adjlst)->visited_bfs);
-			buffer2 = buffer2->next;
-		}
-		buffer1 = buffer1->next;
-	}
-}
-
-static void		print_paths(t_lemin *lemin)
-{
-	t_path		*buffer1;
-	t_lst		*buffer2;
-
-	buffer1 = lemin->paths;
-	while (buffer1)
-	{
-		printf("path: name = %s, level = %d, path_len = %d\n",
-				buffer1->start->node.name,
-				buffer1->start->level,
-				buffer1->path_len);
-		buffer2 = buffer1->path_lst[0];
-		while (buffer2)
-		{
-			printf("    room: name = %s, level = %d, visited_bfs = %d\n",
-					((t_adjlst *)buffer2->adjlst)->node.name,
-					((t_adjlst *)buffer2->adjlst)->level,
-					((t_adjlst *)buffer2->adjlst)->visited_bfs);
-			buffer2 = buffer2->next;
-		}
-		buffer1 = buffer1->next;
-	}
 }
 
 static char		parse_line(t_lemin *lemin, char *line)
@@ -147,7 +79,33 @@ static char		is_all_links_to_rooms(t_lemin *lemin)
 	return (1);
 }
 
-int			main(void)
+static void		send_ants(t_lemin *lemin)
+{
+	t_path	*best_way;
+	t_path	*other_ways;
+	int		finished_ants;
+	int		current_ant;
+
+	finished_ants = 0;
+	best_way = lemin->paths;
+	current_ant = 1;
+	while (finished_ants < lemin->number_of_ants)
+	{
+		other_ways = (lemin->paths->next ? best_way->next : NULL);
+		current_ant = put_ant_to_path(lemin, best_way, current_ant);
+		while (other_ways)
+		{
+			if (send_or_not(lemin, best_way, other_ways, current_ant))
+				current_ant = put_ant_to_path(lemin, best_way, current_ant);
+			other_ways = other_ways->next;
+		}
+		ft_printf("\n");
+		do_iter(lemin);
+		finished_ants = lemin->end->node.count_ants_here;
+	}
+}
+
+int				main(void)
 {
 	char		*line;
 	t_lemin		lemin;
@@ -169,12 +127,8 @@ int			main(void)
 	}
 	if (!is_all_links_to_rooms(&lemin))
 		return (0);
-	print_graph(&lemin);
-	printf("=================================================\n");
 	while (add_shortest_parallel_path_to_paths(&lemin))
 		;
-	print_paths(&lemin);
-	printf("=================================================\n");
 	send_ants(&lemin);
 	free_graph(&lemin);
 	return (0);

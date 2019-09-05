@@ -6,7 +6,7 @@
 /*   By: mbeahan <mbeahan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/12 12:35:01 by rymuller          #+#    #+#             */
-/*   Updated: 2019/09/04 18:35:12 by mbeahan          ###   ########.fr       */
+/*   Updated: 2019/09/05 16:42:50 by mbeahan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ typedef struct			s_lemin
 	t_adjlst			*buffer;
 }						t_lemin;
 
-int						ft_printf(const char *format, ...);
+int						ft_printf(char const *s, ...);
 t_adjlst				*ft_adjlst_push_back(t_lemin *lemin, t_node *node);
 t_lst					*ft_new_lst(t_adjlst *adjlst);
 t_lst					*ft_lst_push_back(t_lemin *lemin,
@@ -78,6 +78,17 @@ void					ft_pop_queue(t_lemin *lemin);
 char					not_in_queue(t_lemin *lemin, t_adjlst *adjlst);
 void					breadth_first_search_to_start(t_lemin *lemin);
 char					add_shortest_parallel_path_to_paths(t_lemin *lemin);
-void					send_ants(t_lemin *lemin);
+int						put_ant_to_path(t_lemin *lemin,
+		t_path *paths, int current_ant);
+void					do_iter(t_lemin *lemin);
+void					move_ant(t_lst *hill_with_ant,
+		t_path *path, t_lemin *lemin);
+int						ants_on_the_way(t_path *path);
+void					print_ops(t_lst *hill_with_ant,
+		t_path *path, int flag);
+t_lst					*last_ant_detect(t_lst *stop,
+		t_lst	*hill_with_ant, t_lst *current_hill);
+int						send_or_not(t_lemin *lemin, t_path *best,
+		t_path *other, int curr_ant);
 # define ERROR(lemin) free_graph(lemin); write(2, "ERROR\n", 6); return (0)
 #endif
